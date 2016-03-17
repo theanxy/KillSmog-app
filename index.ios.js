@@ -11,19 +11,62 @@ import React, {
   View
 } from 'react-native';
 
+const CARDS_URL = 'http://theanxy.github.io/killsmog/data/cards.json';
+
 class FirstProject extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      cards: null
+    };
+  }
+
+  fetchData() {
+    fetch(CARDS_URL)
+        .then((response) => response.json())
+        .then((responseData) => {
+          this.setState({
+            cards: responseData,
+            loaded: true
+          });
+        })
+        .done();
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
   render() {
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    debugger;
+
+    const card = this.state.cards.weather[0];
+    return this.renderCard(card);
+  }
+
+  renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        <Text>
+          Loading cards...
+        </Text>
+      </View>
+    )
+  }
+
+  renderCard(card) {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
+          {card.text}
         </Text>
       </View>
     );
